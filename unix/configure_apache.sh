@@ -21,7 +21,7 @@ if [ "$3" == "--test" ]; then
 else
     if [ ! -f $CONFIG_BACKUP ]; then
         sudo rm -rf $CONFIG_BACKUP
-    fi
+    fiw
 
     sudo mv $CONFIG_SYSTEM $CONFIG_BACKUP
     sudo cp $CONFIG_FILE $CONFIG_SYSTEM
