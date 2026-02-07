@@ -1,15 +1,16 @@
 #!/usr/bin/env bash
 
-if [ "$#" -lt 1 ]; then
+if [ "$#" -lt 2 ]; then
     echo "Usage: $0 <root_directory> <nginx_port> [--test]"
     exit 1
 fi
 
 PORT=$2
 ROOTDIR=$1
-CONFIG_FILE=./baseconfig/nginx/nginx.conf
+CONFIG_FILE=/opt/runtime/utils/baseconfig/nginx/nginx.conf
 CONFIG_SYSTEM=/etc/nginx/nginx.conf
 CONFIG_BACKUP=/etc/nginx/nginx.conf.bak
+
 sed -i "s/__nginx_port__/${PORT}/g" $CONFIG_FILE
 sed -i "s|__rootdir__|${ROOTDIR}|g" $CONFIG_FILE
 

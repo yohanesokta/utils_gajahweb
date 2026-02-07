@@ -6,7 +6,7 @@ fi
 
 PORT=$2
 ROOTDIR=$1
-CONFIG_FILE=./baseconfig/unix/httpd.conf
+CONFIG_FILE=/opt/runtime/utils/baseconfig/unix/httpd.conf
 
 CONFIG_SYSTEM_DIR=/opt/runtime/apache/conf
 CONFIG_SYSTEM=$CONFIG_SYSTEM_DIR/httpd.conf
