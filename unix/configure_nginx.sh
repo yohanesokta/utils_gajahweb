@@ -7,7 +7,7 @@ fi
 
 PORT=$2
 ROOTDIR=$1
-CONFIG_FILE=/opt/runtime/utils/baseconfig/nginx/nginx.conf
+CONFIG_FILE=/opt/runtime/utils/baseconfig/unix/nginx.conf
 CONFIG_SYSTEM=/etc/nginx/nginx.conf
 CONFIG_BACKUP=/etc/nginx/nginx.conf.bak
 
