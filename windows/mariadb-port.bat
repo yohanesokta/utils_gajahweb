@@ -3,21 +3,11 @@ setlocal enabledelayedexpansion
 
 set PORT=%~1
 set ROOTDIR=C:\gajahweb
-set TEMPLATE=%ROOTDIR%\config\mariadb.conf.template
+set UTILSDIR=%ROOTDIR%\data\flutter_assets\utils
+set TEMPLATE=%UTILSDIR%\baseconfig\windows\mariadb.conf.template
 set OUTPUT=%ROOTDIR%\mariadb\data\my.ini
 
-unzip.exe -o config.zip -d %ROOTDIR%\config\
-echo Membuat config dengan port %PORT% ...
-
-(
-for /f "usebackq delims=" %%A in ("%TEMPLATE%") do (
-    set "line=%%A"
-    set "line=!line:__PORT__=%PORT%!"
-    echo !line!
-)
-) > "%OUTPUT%"
-
-rmdir /s /q %ROOTDIR%\config
+%UTILSDIR%\windows\bin\sed.exe %TEMPLATE% %OUTPUT% --replace __PORT__ %PORT%
 
 echo Selesai! nginx.conf digenerate pakai port %PORT%.
 endlocal
