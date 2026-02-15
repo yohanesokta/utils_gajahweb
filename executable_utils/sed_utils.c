@@ -1,3 +1,30 @@
+/**
+ * @file    replace_text.c
+ * @brief   Windows executable utility for replacing text inside files.
+ *
+ * @details
+ * This program provides a command-line utility to search and replace
+ * text within a specified file. It is designed to work on Windows
+ * systems and can be built using CMake with GCC (MinGW).
+ *
+ * Features:
+ *  - Replace specific text patterns inside files
+ *  - Safe file handling
+ *  - Windows-compatible implementation
+ *
+ * Build System:
+ *  - CMake
+ *  - GCC (MinGW or equivalent)
+ *
+ * Usage Example:
+ *  replace_text.exe <input_file> <search_text> <replace_text>
+ *
+ * Copyright (c) 2026
+ * Yohanes Oktanio
+ *
+ * Licensed under MIT License
+ */
+
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <stdlib.h>

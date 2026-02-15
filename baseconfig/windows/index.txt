@@ -1,0 +1,212 @@
+<?php
+// Gajah Webserver Landing Page
+// Created by Your AI Assistant
+
+function custom_phpinfo() {
+    ob_start();
+    phpinfo();
+    $pinfo = ob_get_clean();
+
+    // Hapus header dan footer phpinfo default
+    $pinfo = preg_replace( '%^.*<body>(.*)</body>.*$%ms', '$1', $pinfo);
+
+    // Ganti style bawaan dengan style modern
+    $pinfo = str_replace('<table', '<table class="phpinfo-table"', $pinfo);
+    $pinfo = str_replace('<hr />', '', $pinfo);
+    $pinfo = str_replace('<h2', '<h2 class="phpinfo-section"', $pinfo);
+    $pinfo = str_replace('<p class="phpinfo-credits">', '<p class="phpinfo-credits">', $pinfo);
+    $pinfo = str_replace('<a href="http://www.php.net/">', '<a href="https://www.php.net/" target="_blank" rel="noopener noreferrer">', $pinfo);
+    $pinfo = str_replace('</td><td class="e"', '</td><td class="e-custom"', $pinfo);
+
+    return $pinfo;
+}
+?>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selamat Datang di Gajah Webserver! 🐘</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #3b82f6; /* Tailwind blue-500 */
+            --secondary-color: #e0f2fe; /* Tailwind blue-100 */
+            --dark-bg: #1f2937; /* Tailwind gray-800 */
+            --light-bg: #f3f4f6; /* Tailwind gray-100 */
+            --text-color: #374151; /* Tailwind gray-700 */
+            --white: #ffffff;
+            --border-radius: 8px;
+            --box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            margin: 0;
+            line-height: 1.6;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* --- Landing Page Section --- */
+        .hero {
+            text-align: center;
+            padding: 5rem 2rem;
+            background: linear-gradient(135deg, var(--primary-color), #2563eb);
+            color: var(--white);
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            font-weight: 300;
+        }
+
+        .logo-gajah {
+            width: 100px;
+            height: auto;
+            margin-bottom: 1rem;
+        }
+
+        .button {
+            display: inline-block;
+            background-color: var(--white);
+            color: var(--primary-color);
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: var(--box-shadow);
+        }
+
+        .button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 14px 20px -3px rgba(0, 0, 0, 0.2);
+        }
+        
+        .cta-container {
+            margin-top: 3rem;
+            text-align: center;
+        }
+
+        /* --- Custom PHPInfo Section --- */
+        .phpinfo-container {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+
+        h2.phpinfo-title {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+        }
+        
+        .phpinfo-section {
+            background-color: var(--primary-color) !important;
+            color: var(--white) !important;
+            padding: 1rem !important;
+            border-radius: var(--border-radius) var(--border-radius) 0 0 !important;
+            margin-bottom: 0 !important;
+            font-weight: 600 !important;
+        }
+
+        .phpinfo-section + table {
+            border-top: 0 !important;
+        }
+        
+        .phpinfo-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .phpinfo-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+            vertical-align: top;
+        }
+        
+        .phpinfo-table tr:nth-child(even) {
+            background-color: var(--light-bg);
+        }
+
+        .phpinfo-table .e-custom {
+            font-weight: 600;
+            width: 30%;
+            color: var(--primary-color);
+            background-color: #e0f2fe; /* blue-100 */
+        }
+        
+        .phpinfo-table .v {
+            word-break: break-all;
+        }
+        
+        .phpinfo-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .phpinfo-credits {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin-top: 2rem;
+        }
+        
+        .phpinfo-credits a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .phpinfo-credits a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <h1>Selamat Datang di Gajah Webserver!</h1>
+    <p>Webserver lokal yang sederhana dan kuat, dibuat untuk kamu para developer Indonesia.</p>
+    <a href="#phpinfo" class="button">Lihat Konfigurasi PHP</a>
+</div>
+
+<div class="container">
+    <div class="cta-container">
+        <h2>Siap untuk mulai ngoding?</h2>
+        <p>Silakan letakkan file project PHP-mu di folder <span style="background-color:#3b82f6; color:white; padding:0 10px; border-radius:6px;"> C:\gajahweb\htdocs</span> dan akses melalui browser. </p>
+    </div>
+
+    <div class="phpinfo-container" id="phpinfo">
+        <h2 class="phpinfo-title">Status Server (PHP Info)</h2>
+        <?php echo custom_phpinfo(); ?>
+    </div>
+</div>
+
+</body>
+</html>

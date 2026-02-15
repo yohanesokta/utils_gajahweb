@@ -1,0 +1,5 @@
+[mysqld]
+datadir=C:/gajahweb/mariadb/data
+port=__PORT__
+[client]
+plugin-dir=C:\gajahweb\mariadb/lib/plugin

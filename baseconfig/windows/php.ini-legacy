@@ -1,0 +1,29 @@
+[PHP]
+; === Basic ===
+short_open_tag = On
+display_errors = On
+log_errors = On
+error_log = C:\gajahweb\php\php_errors.log
+date.timezone = "Asia/Jakarta"
+
+error_reporting = E_ALL & ~E_DEPRECATED & ~E_NOTICE
+
+; === Limits ===
+max_execution_time = 300
+memory_limit = 256M
+post_max_size = 32M
+upload_max_filesize = 32M
+max_input_time = 60
+
+; === Extensions (sesuai era 5.2) ===
+extension_dir = "ext"
+extension=php_mysqli.dll
+extension=php_mbstring.dll
+extension=php_curl.dll
+extension=php_gd2.dll
+extension=php_openssl.dll
+extension=php_zip.dll
+
+; === Sessions ===
+session.save_path = "sessions"
+session.gc_maxlifetime = 1440
