@@ -117,7 +117,7 @@ SECTION: Port Mapping
  *   - Only scans IPv4 TCP connections.
  *   - Ports are written as JSON array.
  */
-void get_ports_by_pid(DWORD pid, FILE* out) {
+void get_ports_by_pid(DWORD pid) {
 
     PMIB_TCPTABLE_OWNER_PID tcpTable;
     DWORD size = 0;
@@ -130,12 +130,12 @@ void get_ports_by_pid(DWORD pid, FILE* out) {
     if (GetExtendedTcpTable(tcpTable, &size, FALSE,
                             AF_INET, TCP_TABLE_OWNER_PID_ALL, 0) != NO_ERROR) {
         free(tcpTable);
-        fprintf(out, "[]");
+        printf("[]");
         return;
     }
 
     int first = 1;
-    fprintf(out, "[");
+    printf("[");
 
     for (DWORD i = 0; i < tcpTable->dwNumEntries; i++) {
 
@@ -144,14 +144,14 @@ void get_ports_by_pid(DWORD pid, FILE* out) {
             DWORD port = ntohs((u_short)tcpTable->table[i].dwLocalPort);
 
             if (!first)
-                fprintf(out, ",");
+                printf(",");
 
-            fprintf(out, "%lu", port);
+            printf("%lu", port);
             first = 0;
         }
     }
 
-    fprintf(out, "]");
+    printf("]");
     free(tcpTable);
 }
 
@@ -187,13 +187,9 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    FILE* out = fopen(OUTPUT_FILE, "w");
-    if (!out) {
-        printf("Error: Unable to create output file.\n");
-        return 1;
-    }
+    printf("[\n");
 
-    fprintf(out, "[\n");
+    int firstProc = 1;
 
     for (int i = 1; i < argc; i++) {
 
@@ -201,24 +197,23 @@ int main(int argc, char* argv[]) {
 
         if (find_process(argv[i], &info)) {
 
-            fprintf(out, "  {\n");
-            fprintf(out, "    \"process\": \"%s\",\n", info.name);
-            fprintf(out, "    \"pid\": %lu,\n", info.pid);
-            fprintf(out, "    \"ports\": ");
+            if (!firstProc)
+                printf(",\n");
 
-            get_ports_by_pid(info.pid, out);
+            printf("  {\n");
+            printf("    \"process\": \"%s\",\n", info.name);
+            printf("    \"pid\": %lu,\n", info.pid);
+            printf("    \"ports\": ");
 
-            fprintf(out, "\n  }");
+            get_ports_by_pid(info.pid);
 
-            if (i < argc - 1)
-                fprintf(out, ",");
+            printf("\n  }");
 
-            fprintf(out, "\n");
+            firstProc = 0;
         }
     }
 
-    fprintf(out, "]\n");
-    fclose(out);
+    printf("\n]\n");
 
     return 0;
 }
