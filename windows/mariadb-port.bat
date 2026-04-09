@@ -3,11 +3,13 @@ setlocal enabledelayedexpansion
 
 set PORT=%~1
 set ROOTDIR=C:\gajahweb
-set UTILSDIR=%ROOTDIR%\data\flutter_assets\utils
-set TEMPLATE=%UTILSDIR%\baseconfig\windows\mariadb.conf.template
+set UTILSDIR=%~dp0
+set TEMPLATE=%UTILSDIR%..\baseconfig\windows\mariadb.conf.template
 set OUTPUT=%ROOTDIR%\mariadb\data\my.ini
 
-%UTILSDIR%\windows\bin\sed.exe %TEMPLATE% %OUTPUT% --replace __PORT__ %PORT%
+if not exist "%ROOTDIR%\mariadb\data" mkdir "%ROOTDIR%\mariadb\data"
 
-echo Selesai! nginx.conf digenerate pakai port %PORT%.
+"%UTILSDIR%bin\sed.exe" "%TEMPLATE%" "%OUTPUT%" --replace __PORT__ %PORT%
+
+echo Selesai! my.ini digenerate pakai port %PORT%.
 endlocal

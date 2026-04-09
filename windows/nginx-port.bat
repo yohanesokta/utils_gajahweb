@@ -4,22 +4,16 @@ setlocal enabledelayedexpansion
 set PORT=%~1
 set ROOTNGINX=%~2
 set ROOTDIR=C:\gajahweb
-set TEMPLATE=%ROOTDIR%\config\nginx.conf.template
+set UTILSDIR=%~dp0
+set TEMPLATE=%UTILSDIR%..\baseconfig\windows\nginx.conf.template
 set OUTPUT=%ROOTDIR%\nginx\conf\nginx.conf
 
-unzip.exe -o config.zip -d %ROOTDIR%\config\
-echo Membuat config dengan port %PORT% ...
+echo Membuat config Nginx dengan port %PORT% dan root %ROOTNGINX% ...
+echo Template: %TEMPLATE%
 
-(
-for /f "usebackq delims=" %%A in ("%TEMPLATE%") do (
-    set "line=%%A"
-    set "line=!line:__PORT__=%PORT%!"
-	set "line=!line:__ROOT__=%ROOTNGINX%!"
-    echo !line!
-)
-) > "%OUTPUT%"
+if not exist "%ROOTDIR%\nginx\conf" mkdir "%ROOTDIR%\nginx\conf"
 
-rmdir /s /q %ROOTDIR%\config
-echo Selesai! nginx.conf digenerate pakai port %PORT%.
-echo Selesai! nginx.conf digenerate pakai ROOT %ROOTNGINX%.
+"%UTILSDIR%bin\sed.exe" "%TEMPLATE%" "%OUTPUT%" --replace __PORT__ %PORT% --replace __ROOT__ %ROOTNGINX%
+
+echo Selesai! nginx.conf digenerate.
 endlocal

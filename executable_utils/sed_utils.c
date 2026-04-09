@@ -31,72 +31,72 @@
 #include <string.h>
 #include <errno.h>
 
-#define BUFFER_SIZE 4096
+#define BUFFER_SIZE 8192
 
 void print_usage(const char *prog) {
     printf("Usage:\n");
-    printf("  %s <old_file> <new_file> [--replace OLD NEW]\n", prog);
+    printf("  %s <input_template> <output_file> --replace OLD1 NEW1 [--replace OLD2 NEW2 ...]\n", prog);
 }
 
-int replace_in_file(const char *filename, const char *old, const char *new_text) {
-    FILE *input = fopen(filename, "rb");
+int replace_in_file(const char *src_file, const char *dest_file, int argc, char *argv[]) {
+    FILE *input = fopen(src_file, "rb");
     if (!input) {
         perror("Failed to open input file");
         return 1;
     }
-    char temp_name[1024];
-    tmpnam(temp_name);
 
-    FILE *output = fopen(temp_name, "wb");
+    FILE *output = fopen(dest_file, "wb");
     if (!output) {
-        perror("Failed to create temp file");
+        perror("Failed to create output file");
         fclose(input);
         return 1;
     }
 
     char buffer[BUFFER_SIZE];
-
     while (fgets(buffer, sizeof(buffer), input)) {
-        char *pos;
-        while ((pos = strstr(buffer, old)) != NULL) {
-            *pos = '\0';
-            fputs(buffer, output);
-            fputs(new_text, output);
-            memmove(buffer, pos + strlen(old),
-                    strlen(pos + strlen(old)) + 1);
+        // Apply all replacements to the current line
+        for (int i = 3; i < argc; i++) {
+            if (strcmp(argv[i], "--replace") == 0 && (i + 2) < argc) {
+                const char *old_text = argv[i+1];
+                const char *new_text = argv[i+2];
+
+                char line_buffer[BUFFER_SIZE];
+                char *pos;
+                char *current_pos = buffer;
+                line_buffer[0] = '\0';
+
+                while ((pos = strstr(current_pos, old_text)) != NULL) {
+                    strncat(line_buffer, current_pos, pos - current_pos);
+                    strcat(line_buffer, new_text);
+                    current_pos = pos + strlen(old_text);
+                }
+                strcat(line_buffer, current_pos);
+                strcpy(buffer, line_buffer);
+                i += 2; // Skip OLD and NEW
+            }
         }
         fputs(buffer, output);
     }
 
     fclose(input);
     fclose(output);
-
-    remove(filename);
-    rename(temp_name, filename);
     return 0;
 }
 
 int main(int argc, char *argv[]) {
-
-    if (argc < 3) {
+    if (argc < 6) {
         print_usage(argv[0]);
         return 1;
     }
 
-    const char *old_file = argv[1];
-    const char *new_file = argv[2];
+    const char *src_file = argv[1];
+    const char *dest_file = argv[2];
 
-    if (argc == 6 && strcmp(argv[3], "--replace") == 0) {
-        if (replace_in_file(old_file, argv[4], argv[5]) != 0) {
-            return 1;
-        }
-    }
-
-    if (rename(old_file, new_file) != 0) {
-        fprintf(stderr, "Rename failed: %s\n", strerror(errno));
+    if (replace_in_file(src_file, dest_file, argc, argv) != 0) {
+        fprintf(stderr, "Processing failed\n");
         return 1;
     }
 
-    printf("Success: %s -> %s\n", old_file, new_file);
+    printf("Success: %s -> %s\n", src_file, dest_file);
     return 0;
 }
