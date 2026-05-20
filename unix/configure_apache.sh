@@ -19,10 +19,13 @@ sed -i "s|__rootdir__|${ROOTDIR}|g" $CONFIG_FILE
 if [ "$3" == "--test" ]; then
     echo "Apache configuration test mode. Configuration file located at $CONFIG_FILE"
 else
-    if [ ! -f $CONFIG_BACKUP ]; then
-        sudo rm -rf $CONFIG_BACKUP
-    fiw
+    # Remove existing backup if it exists to allow mv to succeed
+    if [ -f "$CONFIG_BACKUP" ]; then
+        sudo rm -f "$CONFIG_BACKUP"
+    fi
 
-    sudo mv $CONFIG_SYSTEM $CONFIG_BACKUP
-    sudo cp $CONFIG_FILE $CONFIG_SYSTEM
+    if [ -f "$CONFIG_SYSTEM" ]; then
+        sudo mv "$CONFIG_SYSTEM" "$CONFIG_BACKUP"
+    fi
+    sudo cp "$CONFIG_FILE" "$CONFIG_SYSTEM"
 fi
