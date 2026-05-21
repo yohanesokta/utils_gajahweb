@@ -11,8 +11,16 @@ CONFIG_FILE=/opt/runtime/utils/baseconfig/unix/nginx.conf
 CONFIG_SYSTEM=/etc/nginx/nginx.conf
 CONFIG_BACKUP=/etc/nginx/nginx.conf.bak
 
+# Default values for new parameters
+PHP_PORT=${PHP_PORT:-9000}
+LOG_DIR=${LOG_DIR:-/var/log/nginx}
+TEMP_DIR=${TEMP_DIR:-/tmp}
+
 sed -i "s/__nginx_port__/${PORT}/g" $CONFIG_FILE
 sed -i "s|__rootdir__|${ROOTDIR}|g" $CONFIG_FILE
+sed -i "s|__PHP_PORT__|${PHP_PORT}|g" $CONFIG_FILE
+sed -i "s|__LOG_DIR__|${LOG_DIR}|g" $CONFIG_FILE
+sed -i "s|__TEMP_DIR__|${TEMP_DIR}|g" $CONFIG_FILE
 
 if [ "$3" == "--test" ]; then
     echo "Nginx configuration test mode. Configuration file located at $CONFIG_FILE"
