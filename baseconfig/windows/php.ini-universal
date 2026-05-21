@@ -16,15 +16,27 @@ post_max_size = 512M
 upload_max_filesize = 512M
 max_input_time = 60
 
-; === Extensions (biar aktif langsung) ===
+; === Extensions (default untuk Composer/Laravel) ===
 extension_dir = "ext"
-extension=mysqli
-extension=pdo_mysql
-extension=mbstring
+extension=bz2
 extension=curl
+extension=exif
+extension=fileinfo
 extension=gd
+extension=gettext
+extension=intl
+extension=mbstring
+extension=mysqli
 extension=openssl
+extension=pdo_mysql
+extension=pdo_sqlite
+extension=soap
+extension=sockets
+extension=sqlite3
+extension=xml
+extension=xsl
 extension=zip
+extension=sodium
 
 ; === Sessions ===
 session.save_handler = files
