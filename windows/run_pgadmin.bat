@@ -12,6 +12,8 @@ if "%PGADMIN_ROOT%"=="" set "PGADMIN_ROOT=C:\gajahweb\pgadmin"
 set "PGADMIN_DATA_DIR=%PGADMIN_ROOT%\data"
 set "PGADMIN_VENV_DIR=%PGADMIN_ROOT%\venv"
 set "PGADMIN_PYTHON_EXE=%PGADMIN_VENV_DIR%\Scripts\python.exe"
+set "PGADMIN_EXE=%PGADMIN_VENV_DIR%\Scripts\pgadmin4.exe"
+set "PGADMIN_CLI_EXE=%PGADMIN_VENV_DIR%\Scripts\pgadmin4-cli.exe"
 set "PGADMIN_WEB_DIR=%PGADMIN_VENV_DIR%\Lib\site-packages\pgadmin4\web"
 set "PYTHON_BOOTSTRAP="
 
@@ -30,6 +32,7 @@ if not defined PYTHON_BOOTSTRAP (
 
 if /i "%ACTION%"=="stop" goto :stop
 if /i "%ACTION%"=="install" goto :install
+if /i "%ACTION%"=="update" goto :update
 goto :run
 
 :install
@@ -45,6 +48,13 @@ if errorlevel 1 (
 	pause
 	exit /b 1
 )
+call :install_package
+if errorlevel 1 (
+	echo.
+	echo ERROR: Failed to install pgAdmin4
+	pause
+	exit /b 1
+)
 call :write_config
 if errorlevel 1 (
 	echo.
@@ -52,19 +62,54 @@ if errorlevel 1 (
 	pause
 	exit /b 1
 )
+call :restart_gajahweb
 echo.
 echo ========================================
 echo pgAdmin installation finished successfully
+echo ========================================
+echo.
+exit /b 0
+
+:update
+echo.
+echo ========================================
+echo pgAdmin Update Process Started
+echo ========================================
+echo.
+call :ensure_venv
+if errorlevel 1 (
+	echo.
+	echo ERROR: Failed to setup virtual environment
+	pause
+	exit /b 1
+)
+call :update_package
+if errorlevel 1 (
+	echo.
+	echo ERROR: Failed to update pgAdmin4
+	pause
+	exit /b 1
+)
+call :write_config
+if errorlevel 1 (
+	echo.
+	echo ERROR: Failed to write configuration
+	pause
+	exit /b 1
+)
+call :restart_gajahweb
+echo.
+echo ========================================
+echo pgAdmin update finished successfully
 echo ========================================
 echo.
 pause
 exit /b 0
 
 :run
-call :ensure_venv
-if errorlevel 1 (
+if not exist "%PGADMIN_PYTHON_EXE%" (
 	echo.
-	echo ERROR: Failed to setup environment for running pgAdmin
+	echo ERROR: pgAdmin environment not found. Please install or update pgAdmin first.
 	pause
 	exit /b 1
 )
@@ -76,27 +121,37 @@ if errorlevel 1 (
 	exit /b 1
 )
 
-if not exist "%PGADMIN_WEB_DIR%\pgAdmin4.py" (
+if not exist "%PGADMIN_EXE%" if not exist "%PGADMIN_WEB_DIR%\pgAdmin4.py" (
 	echo.
-	echo ERROR: pgAdmin script not found at: %PGADMIN_WEB_DIR%\pgAdmin4.py
+	echo ERROR: pgAdmin executable/script not found.
+	echo EXE: %PGADMIN_EXE%
+	echo PY : %PGADMIN_WEB_DIR%\pgAdmin4.py
+	echo Please install or update pgAdmin first.
 	pause
 	exit /b 3
 )
 
-cd /d "%PGADMIN_WEB_DIR%"
 echo.
 echo ========================================
 echo Starting pgAdmin 4 on port %PORT%
 echo ========================================
-echo Python: %PGADMIN_PYTHON_EXE%
+echo EXE: %PGADMIN_EXE%
 echo Config: %PGADMIN_WEB_DIR%\config_local.py
 echo Data:   %PGADMIN_DATA_DIR%
 echo.
-"%PGADMIN_PYTHON_EXE%" "%PGADMIN_WEB_DIR%\pgAdmin4.py"
+if exist "%PGADMIN_EXE%" (
+	start "" "%PGADMIN_EXE%"
+) else (
+	start "" "%PGADMIN_PYTHON_EXE%" "%PGADMIN_WEB_DIR%\pgAdmin4.py"
+)
 
-echo.
-echo pgAdmin process finished with exit code %ERRORLEVEL%
-exit /b %ERRORLEVEL%
+if errorlevel 1 (
+	echo ERROR: Failed to start pgAdmin process
+	exit /b 1
+)
+
+echo pgAdmin started in detached mode
+exit /b 0
 
 :stop
 for /f "tokens=5" %%P in ('netstat -ano ^| findstr :%PORT%') do taskkill /F /PID %%P >nul 2>&1
@@ -117,14 +172,9 @@ if not exist "%PGADMIN_PYTHON_EXE%" (
 )
 
 echo.
-echo Upgrading pip, setuptools, and wheel...
-"%PGADMIN_PYTHON_EXE%" -m pip install --upgrade pip setuptools wheel
-if errorlevel 1 (
-	echo ERROR: Failed to upgrade pip, setuptools, or wheel
-	exit /b 1
-)
-echo pip, setuptools, and wheel upgraded successfully
+exit /b 0
 
+:install_package
 echo.
 echo Installing pgAdmin4...
 "%PGADMIN_PYTHON_EXE%" -m pip install pgadmin4
@@ -133,6 +183,28 @@ if errorlevel 1 (
 	exit /b 1
 )
 echo pgAdmin4 installed successfully
+exit /b 0
+
+:update_package
+echo.
+echo Updating pgAdmin4...
+"%PGADMIN_PYTHON_EXE%" -m pip install --upgrade pgadmin4
+if errorlevel 1 (
+	echo ERROR: Failed to update pgAdmin4
+	exit /b 1
+)
+echo pgAdmin4 updated successfully
+exit /b 0
+
+:restart_gajahweb
+echo.
+echo Restarting GajahWeb app (kill process)...
+taskkill /F /IM gajahweb.exe >nul 2>&1
+if errorlevel 1 (
+	echo gajahweb.exe is not running or could not be terminated.
+) else (
+	echo gajahweb.exe terminated.
+)
 exit /b 0
 
 :write_config
