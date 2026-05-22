@@ -3,7 +3,7 @@
 short_open_tag = On
 display_errors = On
 log_errors = On
-error_log = __LOG_DIR__/php_errors.log
+error_log = C:\gajahweb\temp\php_errors.log
 date.timezone = "Asia/Jakarta"
 
 error_reporting = E_ALL & ~E_DEPRECATED & ~E_NOTICE
@@ -34,5 +34,5 @@ extension=php_xml.dll
 extension=php_zip.dll
 
 ; === Sessions ===
-session.save_path = "__TEMP_DIR__/sessions"
+session.save_path = "C:\gajahweb\temp\sessions"
 session.gc_maxlifetime = 1440

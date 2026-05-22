@@ -3,7 +3,7 @@
 short_open_tag = On
 display_errors = On
 log_errors = On
-error_log = __LOG_DIR__/php_errors.log
+error_log = C:\gajahweb\temp\php_errors.log
 default_charset = "UTF-8"
 date.timezone = "Asia/Jakarta"
 
@@ -40,7 +40,7 @@ extension=sodium
 
 ; === Sessions ===
 session.save_handler = files
-session.save_path = "__TEMP_DIR__/sessions"
+session.save_path = "C:\gajahweb\temp\sessions"
 session.use_strict_mode = 1
 session.gc_maxlifetime = 1440
 
